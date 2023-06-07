@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:reactive/bloc_base.dart';
-import './reactive_widget.dart';
+import 'package:reactive/bloc/bloc_base.dart';
+import 'package:reactive/new_screen.dart';
+import 'reactive/reactive_widget.dart';
 
 void main() {
   runApp(const MyApp());
@@ -8,6 +9,10 @@ void main() {
 
 class MainBloc extends Bloc<int> {
   MainBloc(int value) : super(value);
+
+  void newVal(int value) {
+    add(value);
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -16,6 +21,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     MainBloc blocc = MainBloc(10);
+    int a = 10;
 
     return MaterialApp(
       title: 'Flutter Demo',
@@ -28,7 +34,32 @@ class MyApp extends StatelessWidget {
         ),
         body: ReactiveWidget<int>(
           bloc: blocc,
-          widget: const Text("Petar"),
+          builder: (BuildContext context, int? state) {
+            print(state);
+            return Column(
+              children: [
+                Text(
+                  state.toString(),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    blocc.add(a + 10);
+                    a += 10;
+                  },
+                  child: Text("Dodaj"),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => NewScreen(bloc: blocc)));
+                  },
+                  child: Text("Otvori"),
+                )
+              ],
+            );
+          },
         ),
       ),
     );
