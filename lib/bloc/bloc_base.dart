@@ -18,10 +18,13 @@ abstract class Bloc<T> {
 
   void add(T value) async {
     if (this._condition != null) {
-      if (this._condition == true) streamSink.add(value);
+      if (this._condition == true) {
+        streamSink.add(value);
+        state = value;
+      }
     } else {
       streamSink.add(value);
+      state = value;
     }
-    state = value;
   }
 }
