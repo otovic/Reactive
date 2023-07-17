@@ -16,7 +16,7 @@ class ReactiveWidget<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return StreamBuilder(
       stream: bloc.stream,
-      initialData: bloc.state,
+      initialData: bloc.currentState,
       builder: (BuildContext context, AsyncSnapshot<T> snap) =>
           builder(context, snap.data),
     );

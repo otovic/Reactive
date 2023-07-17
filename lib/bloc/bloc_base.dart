@@ -6,10 +6,11 @@ abstract class Bloc<T> {
   Stream<T> get stream => _controller.stream;
   Function? _condition;
 
-  late T state;
+  T? previousState = null;
+  late T currentState;
 
-  Bloc(this.state) {
-    streamSink.add(this.state);
+  Bloc(T state) {
+    this.currentState = state;
   }
 
   void setCondition(Function condition) {
@@ -17,14 +18,22 @@ abstract class Bloc<T> {
   }
 
   void add(T value) async {
+    this.previousState = currentState!;
+    this.currentState = value;
+
+    print(this.currentState);
+
     if (this._condition != null) {
-      if (this._condition == true) {
-        streamSink.add(value);
-        state = value;
+      if (this.previousState != null) {
+        if (this._condition!(this.previousState, this.currentState) == true) {
+          streamSink.add(value);
+          return;
+        }
+        return;
       }
+      streamSink.add(value);
     } else {
       streamSink.add(value);
-      state = value;
     }
   }
 }
