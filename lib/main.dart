@@ -11,9 +11,7 @@ void main() {
 class MainBloc extends Bloc<int> {
   MainBloc(int value) : super(value);
 
-  void newVal(int value) {
-    add(value);
-  }
+  void newVal(int value) {}
 }
 
 class MyApp extends StatelessWidget {
@@ -36,7 +34,6 @@ class MyApp extends StatelessWidget {
           body: ReactiveWidget<int>(
             bloc: blocc,
             condition: (int prev, int curr) {
-              print(prev);
               if (curr + curr > prev) {
                 return true;
               }
@@ -50,7 +47,7 @@ class MyApp extends StatelessWidget {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      blocc.add(state == null ? 0 : state + 10);
+                      blocc.emit(state! + 10);
                     },
                     child: Text("Dodaj"),
                   ),
