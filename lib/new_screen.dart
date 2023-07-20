@@ -10,7 +10,7 @@ class NewScreen extends StatelessWidget {
     print(bloc);
     return ReactiveWidget(
       bloc: bloc,
-      builder: (BuildContext context, int? state) {
+      builder: (BuildContext context, MainBloc handle, int? state) {
         return Scaffold(
           appBar: AppBar(
             title: Text(state.toString()),

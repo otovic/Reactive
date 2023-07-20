@@ -16,10 +16,10 @@ class ReactiveWidget<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: bloc.stream,
-      initialData: bloc.state!.currentState,
+      stream: bloc.controller.stream,
+      initialData: bloc.state.currentState,
       builder: (BuildContext context, AsyncSnapshot<T> snap) =>
-          builder(context, snap.data),
+          builder(context, this.bloc, snap.data),
     );
   }
 }

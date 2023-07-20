@@ -11,7 +11,9 @@ void main() {
 class MainBloc extends Bloc<int> {
   MainBloc(int value) : super(value);
 
-  void newVal(int value) {}
+  void newVal(int value) {
+    this.emit(this.state.currentState + value);
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -39,7 +41,7 @@ class MyApp extends StatelessWidget {
               }
               return false;
             },
-            builder: (BuildContext context, int? state) {
+            builder: (BuildContext context, MainBloc handle, int? state) {
               return Column(
                 children: [
                   Text(
@@ -47,7 +49,7 @@ class MyApp extends StatelessWidget {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      blocc.emit(state! + 10);
+                      handle.newVal(20);
                     },
                     child: Text("Dodaj"),
                   ),
