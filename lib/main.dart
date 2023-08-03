@@ -8,13 +8,15 @@ void main() {
   runApp(MyApp());
 }
 
-class MainBloc extends Bloc<int> {
+class MainBloc extends Bloc<MainBlocEvent, int> {
   MainBloc(int value) : super(value);
 
   void newVal(int value) {
-    this.emit(this.state.currentState + value);
+    this.emit(value);
   }
 }
+
+class MainBlocEvent {}
 
 class MyApp extends StatelessWidget {
   final MainBloc blocc = MainBloc(10);
@@ -33,7 +35,7 @@ class MyApp extends StatelessWidget {
           appBar: AppBar(
             title: Text("Test"),
           ),
-          body: ReactiveWidget<int>(
+          body: ReactiveWidget<MainBlocEvent, int>(
             bloc: blocc,
             condition: (int prev, int curr) {
               if (curr + curr > prev) {
