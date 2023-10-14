@@ -1,57 +1,53 @@
-import 'dart:async';
-
 import '../state/data_controller.dart';
 import '../state/state_streamable.dart';
 
+typedef FireEventType<S, E> = void Function(E currentState, S value);
+
 abstract class Bloc<E, T> {
-  StreamData<T> controller = StreamData();
   late Streamable<T> _state;
-  List<dynamic> events = [];
+  late Map<Type, Function> _events = {};
+  StreamData<T> _controller = StreamData();
 
   Bloc(T state) {
     this._state =
-        Streamable<T>(currentState: state, stream: controller.controller);
+        Streamable<T>(currentState: state, stream: _controller.streamSink);
   }
 
   void emit(T value) {
     this._state.emit(value);
   }
 
+  T? get getPreviousState => _state.previousState;
   T get getCurrentState => _state.currentState;
+  Stream<T> get getCurrentStream => _controller.stream;
 
-  void setCondition(Function condition) {
-    this._state.setCondition(condition);
-  }
-
-  void on<H>(void Function(H value) event) {
+  void on<H>(void Function(T currentState, H value) event) {
     assert(_isSubtype<H, E>(),
         "Nepodudaran tip eventa! ${H} nije subtip od ${E}!");
 
     Type eventType = H;
 
-    events.forEach((element) {
-      if (element[0] == eventType) {
+    _events.forEach((key, element) {
+      if (key == eventType) {
         throw FormatException("Event ${H} je vec registrovan!");
       }
     });
 
-    events.add([eventType, event]);
+    _events[eventType] = event;
   }
 
   bool _isSubtype<Q, W>() => <Q>[] is List<W>;
 
-  void fireEvent<Q>(Q event) {
-    assert(_isSubtype<Q, E>(),
-        "Nepodudaran tip eventa! ${Q} nije subtip od ${E}!");
+  void fireEvent<S>(S state) {
+    assert(_isSubtype<S, E>(), "Nepodudaran tip eventa! $S nije subtip od $E!");
 
-    Type eventType = Q;
+    Type eventType = S;
 
-    events.forEach((element) {
-      if (element[0] == eventType) {
-        element[1](event);
+    _events.forEach((key, element) {
+      if (key == eventType) {
+        element(_state.currentState, state);
+        return;
       }
-
-      return;
     });
   }
 }

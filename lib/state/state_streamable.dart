@@ -1,39 +1,25 @@
 import 'dart:async';
 
 class Streamable<T> {
-  late T? previousState;
-  late T currentState;
-  late Function? _condition;
-  late StreamController<T> stream;
+  late T? _previousState;
+  late T _currentState;
+  late StreamSink<T> stream;
 
-  Streamable({condition, required this.currentState, required this.stream}) {
-    this._condition = condition;
-  }
+  T get currentState => _currentState;
+  T? get previousState => _previousState;
 
-  void setCondition(Function condition) {
-    this._condition = condition;
-  }
+  Streamable({condition, required currentState, required this.stream})
+      : this._currentState = currentState;
 
   void setInitialState(T state) {
-    this.currentState = state;
-    this.previousState = state;
+    this._currentState = state;
+    this._previousState = state;
   }
 
   void emit(T value) {
-    this.previousState = currentState!;
-    this.currentState = value;
+    this._previousState = currentState!;
+    this._currentState = value;
 
-    if (this._condition != null) {
-      if (this.previousState != null) {
-        if (this._condition!(this.previousState, this.currentState) == true) {
-          stream.sink.add(value);
-          return;
-        }
-        return;
-      }
-      stream.sink.add(value);
-    } else {
-      stream.sink.add(value);
-    }
+    stream.add(value);
   }
 }
